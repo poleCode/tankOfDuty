@@ -1,0 +1,50 @@
+body{
+	margin:0px;
+	/*background-image: url("../img/tankGame.jpg");*/
+	background-size: cover;
+}
+
+header{
+	display: flex;
+	justify-content: center;
+}
+
+header h1{
+	font-size: 3em;
+}
+
+#paneles{
+	width: 90%;
+	height: 400px;
+	border: 1px solid black;
+	display: flex;
+	margin:auto;
+}
+
+#usuario{
+	width: 70%;
+	height: 100%;
+	border: 1px solid blue;
+}
+
+#tablas{
+	border: 1px solid red;
+	width: 30%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+#jugadores{
+	border: 1px solid orange;
+	width: 90%;
+	height: 30%;
+	margin: auto;
+}
+
+#partidas{
+	border: 1px solid green;
+	width: 90%;
+	height: 30%;
+	margin: auto;
+}
