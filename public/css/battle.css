@@ -1,0 +1,42 @@
+*{
+	border: 1px solid black;
+}
+
+#battle_menu{
+	display: flex;
+	height: 400px;
+}
+
+#tablero{
+	width: 60%;
+	height: 100%;
+}
+
+#act{
+	width: 60%;
+	height: 100%;
+}
+
+#shoot{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 20%;
+}
+
+#moves{
+	display: flex;
+	height: 20%;
+	justify-content: center;
+	align-items: center;
+}
+
+#up_down{
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+#chat{
+	height: 59%;
+}

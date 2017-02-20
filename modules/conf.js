@@ -13,8 +13,9 @@ var config={
 		secret:"rXDYpZTsHuy5FcL_4dfahj3I"
 	},
 	mongo:{
-		url:'mongodb://52.57.173.168:27017/db'
+		// url:'mongodb://52.57.173.168:27017/db'
+		url:'mongodb://prueba:benavides1893@ds035006.mlab.com:35006/dbserg'
 	}
 
 }
-module.exports = config
+module.exports = config;

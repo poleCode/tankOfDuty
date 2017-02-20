@@ -1,15 +1,15 @@
 'use strict';
 const elementos = require('./elementos');
 const tablero = require('./tablero');
-const mongoClient=require('mongodb').MongoClient;
-const assert=require('assert');
-const config=require('./conf.js');
+const mongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+const config = require('./conf.js');
 // const Jugador = require('./jugador');
-const url=config.mongo.url;
+const url = config.mongo.url;
 
 class Partida {
 
-	constructor(nombre, columnas, filas,tick) {
+	constructor(nombre, columnas, filas, tick) {
 
 
 		this._tablero = new tablero(nombre, columnas, filas);
@@ -17,8 +17,8 @@ class Partida {
 		this._tick = tick || 3000;
 	}
 
-	set tick(value){
-		this._tick=value;
+	set tick(value) {
+		this._tick = value;
 	}
 
 	addTanque(nombre) {
@@ -49,56 +49,83 @@ class Partida {
 
 	}
 
-	addJugador(jugador){
-		this._jugadores.set(jugador.id,jugador);
+	addJugador(jugador) {
+		this._jugadores.set(jugador.id, jugador);
 	}
 
-	guardarPartida(){
-		
+	guardarPartida() {
+
 		// console.log(Array.from(this._jugadores));
 
-		var part={
-			nombre:this._tablero.nombre,
-			tablero:this._tablero,
-			jugadores:Array.from(this._jugadores)
-			// jugadores:this._jugadores
+		var part = {
+			nombre: this._tablero.nombre,
+			tablero: this._tablero,
+			jugadores: Array.from(this._jugadores)
+				// jugadores:this._jugadores
 		};
 
 		// var nom=cargarPartidas();
 		// var json=JSON.parse({partida:part});
 		// console.log(part);
-		mongoClient.connect(url,function(err,db){
-			assert.equal(null,err);
+		mongoClient.connect(url, function(err, db) {
+			assert.equal(null, err);
 			console.log('conexion exitosa');
 
-			var conex=db.collection('partida');
+			var conex = db.collection('partida');
 			// console.log(conex);
-			conex.insert(part,function(){
+			conex.insert(part, function() {
 				console.log('insertado');
 				db.close();
 			})
 		})
 	}
 
-	cargarPartidas(){
-		mongoClient.connect(url, function(err,db){
-			assert.equal(null,err);
+	cargarPartidas(cb) {
+		// cb("hola");
+		mongoClient.connect(url, function(err, db) {
+			// assert.equal(null,err);
+			// cb("hola");
+			if (!err) {
+				db.collection('partidas').find().toArray(function(err, data) {
+					console.log(data);
+					console.log("error: " + err);
+					// db.close();
+					cb(err,data);
+				});
+			}else {
+				console.log('error conexion');
+				cb("error","cpnexoin");
+			}
 
-			var coleccion=db.collection('partida');
-			coleccion.find().toArray(function(err,data){
-				return(data);
-				db.close();
-			});
-
+			// cb(data2);
 		})
+
+		// mongoClient.connect(url, function(err,db){
+		// 	if(!err){
+		// 		db.collection("partida", function(err,collection){
+		// 			collection.find(function(err,item){
+		// 				if(!err){
+		// 					cb(null,item.toArray());
+		// 				}else{
+		// 					cb("error");
+		// 				}
+		// 			});
+		// 		});
+		// 	}else{
+		// 		cb("error",null);
+		// 	}
+		// })
+
 	}
 
-	comprobarPartida(nombrep,cb){
-		mongoClient.connect(url, function(err,db){
-			assert.equal(null,err);
+	comprobarPartida(nombrep, cb) {
+		mongoClient.connect(url, function(err, db) {
+			assert.equal(null, err);
 
-			var coleccion=db.collection('partida');
-			coleccion.find({nombre:nombrep}).toArray(function(err,data){
+			var coleccion = db.collection('partida');
+			coleccion.find({
+				nombre: nombrep
+			}).toArray(function(err, data) {
 				db.close();
 				cb(data.length);
 			});
@@ -107,4 +134,4 @@ class Partida {
 	}
 
 }
-module.exports=Partida;
+module.exports = Partida;

@@ -4,9 +4,9 @@ const elementos = require("./elementos.js");
 var contarBala = 0;
 class Tablero{
 	constructor(nombre,columnas,filas){
-		this._nombre = nombre;
-		this._columnas = columnas-1;
-		this._filas = filas-1;
+		this._nombre = nombre||"tablero";
+		this._columnas = columnas-1 || 8;
+		this._filas = filas-1 || 8;
 		this._tablero = new Array(columnas);
 		for (let x = 0;x<columnas;x++){
 			this._tablero[x] = new Array(filas);

@@ -20,6 +20,7 @@ const mysqlconnection = {
 }
 
 let algo = new Usuario(" ", mysqlconnection);
+let partida = new Partida();
 
 const app = express();
 const server = http.createServer(app);
@@ -75,28 +76,41 @@ app.post('/inicioJuego', ensureAuth, function(req, res) {
 	var tanques = [];
 	var error = "";
 	algo.consultarTanques(req.user.ID, (err, codeErr, rows) => {
-			if (codeErr == 0) {
-				for(var r of rows){
-					console.log(r);
-				}
-				tanques = rows;
-			} else {
-				console.log("error nº " + codeErr);
-				error = codeErr;
+		if (codeErr == 0) {
+			for (var r of rows) {
+				console.log(r);
 			}
+			tanques = rows;
+		} else {
+			console.log("error nº " + codeErr);
+			error = codeErr;
+		}
+
+		partida.cargarPartidas(function(err, data) {
+			console.log(data)
 
 			res.json({
 				user: req.user,
 				tank: tanques,
-				error: error
-			})
-		})
-		// console.log(algo)
+				error: error,
+				partidas:data
+			});
+		});
+
+
+	});
+	// console.log(algo)
 
 });
 
-app.post('/crearTanque',ensureAuth,(req,res)=>{
-	algo.crearTanque(req.user.ID, req.data);
+app.post('/crearTanque', ensureAuth, (req, res) => {
+	algo.crearTanque(req.user.ID, req.data, (err, codeErr) => {
+
+		res.json({
+			error: codeErr
+		});
+
+	});
 });
 
 server.listen(3000, () => console.log('Servidor comezado con express. Escoitando no porto 3000'));

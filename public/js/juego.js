@@ -7,7 +7,7 @@ $(document).ready(function(){
 		data:{},
 		method:"post",
 		success:function(res, textStatus, xhr){
-			console.log(res.user);
+			console.log(res);
 			$("#nombre").text(res.user.username);
 			$("#usuario img").attr("src",res.user.photo);
 			personalId=res.user.ID;
