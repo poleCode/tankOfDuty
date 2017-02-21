@@ -11,14 +11,31 @@ class Partida {
 
 	constructor(nombre, columnas, filas, tick) {
 
-
+		this._nombre=nombre;
 		this._tablero = new tablero(nombre, columnas, filas);
 		this._jugadores = new Map();
 		this._tick = tick || 3000;
 	}
 
+	get nombre(){
+		return this._nombre;
+	}
+
 	set tick(value) {
 		this._tick = value;
+	}
+
+	infoPartida(){
+		let jugadores=[];
+		this._jugadores.forEach( function(element) {
+			jugadores.push({id:element.id,nombre:element.nombre});
+		});
+		return {
+			nombre:this.nombre,
+			tablero:this._tablero.info,
+			jugadores: jugadores,
+			dimensiones: this._tablero.dimension
+		}
 	}
 
 	addTanque(nombre) {
@@ -124,10 +141,11 @@ class Partida {
 
 			var coleccion = db.collection('partida');
 			coleccion.find({
-				nombre: nombrep
+				id: nombrep
 			}).toArray(function(err, data) {
 				db.close();
-				cb(data.length);
+				// cb(data.length);
+				cb(data);
 			});
 
 		})

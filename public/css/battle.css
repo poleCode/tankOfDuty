@@ -9,7 +9,9 @@
 
 #tablero{
 	width: 60%;
-	height: 100%;
+	height: 400px;
+	display: flex;
+	justify-content: space-between;
 }
 
 #act{
@@ -39,4 +41,18 @@
 
 #chat{
 	height: 59%;
+}
+
+#juego{
+	/*border: 1px solid black;*/
+	width: 100%;
+	display: flex;
+}
+
+#juego>div>div{
+	/*border: 1px solid green;*/
+}
+
+#juego>div{
+	width: 100%;
 }

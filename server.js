@@ -25,6 +25,8 @@ let partida = new Partida();
 const app = express();
 const server = http.createServer(app);
 
+var partidasJ = [];
+
 app.use(BodyParser.json()); //Recibir peticiones POST con datos en json
 app.use(BodyParser.urlencoded({
 	extended: true
@@ -87,19 +89,24 @@ app.post('/inicioJuego', ensureAuth, function(req, res) {
 		}
 
 		partida.cargarPartidas(function(err, data) {
-			console.log(data)
+			// console.log(data)
+			partidasJ = []
+			for (var d of data) {
+				var parti = new Partida(d.nombre, d.columnas, d.filas)
+				partidasJ.push(parti.infoPartida());
+			}
+			console.log(partidasJ);
 
 			res.json({
 				user: req.user,
 				tank: tanques,
 				error: error,
-				partidas:data
+				partidas: partidasJ
 			});
 		});
 
 
 	});
-	// console.log(algo)
 
 });
 
@@ -113,38 +120,72 @@ app.post('/crearTanque', ensureAuth, (req, res) => {
 	});
 });
 
+app.post('/batalla', ensureAuth, function(req, res) {
+	console.log('comprobar partida');
+	console.log(req.body);
+
+	var game = partidasJ.filter(function(part) {
+		if (part.nombre == req.body.id) {
+			return part;
+		}
+	});
+
+
+	game[0].jugadores.push({
+		id: req.user.ID,
+		nombre: req.user.username
+	});
+	// partida.comprobarPartida(req.body.id, function(data){
+	// 	console.log(data);
+	// })
+	// console.log(game[0]);
+	res.json({
+		estado: "listo"
+	})
+});
+
+app.get('/batalla', ensureAuth, function(req, res) {
+	res.sendFile('public/battle.html', {
+		root: __dirname
+	});
+});
+
+app.get('/batallaDatos', ensureAuth, (req, res) => {
+
+	// var juego = [1,2];
+	partidasJ.filter(function(part) {
+		// console.log('partida');
+		// console.log(part);
+		part.jugadores.filter(function(jugador) {
+			console.log(jugador.id);
+			if (jugador.id == req.user.ID) {
+				// console.log(part);
+
+				res.json({
+					partida: part
+				})
+			}
+		});
+	});
+
+	// console.log(juego[0]);
+
+
+	// var juego = partidasJ.filter(function(part) {
+	// 	if (part.jugadores.filter(function(jugador) {
+	// 			if (jugador.id == req.user.ID) {
+	// 				return part
+	// 			}
+	// 		})) 
+	// 		console.log(part._jugadores);
+	// 		return part;
+	// 	}
+	// })
+	// console.log(juego[0]);
+	// res.json({
+	// 	estado: juego[0]
+	// });
+})
+
+
 server.listen(3000, () => console.log('Servidor comezado con express. Escoitando no porto 3000'));
-
-// mongoClient.connect(config.mongo.url, function(err, db) {
-// 	assert.equal(null, err);
-
-// 	var coleccion = db.collection('partida');
-// 	coleccion.find().toArray(function(err, data) {
-// 		var partida;
-// 		var player;
-// 		// console.log(data[0].jugadores[0][1]);
-
-// 		for(var i=0;i<data.length;i++){
-// 			partida= new Partida(data[i].nombre, data[i].tablero._columnas,data[i].tablero._filas);
-// 			console.log("1- "+partida);
-// 			for(var j=0;j<data[i].jugadores.length;j++){
-// 				console.log("2- "+data[i].jugadores[j])
-// 				for(var r=0;r<data[i].jugadores[j].length;r++){
-// 					console.log("3- "+data[i].jugadores[j][r]);
-// 					r=r+1;
-// 					console.log("4- "+data[i].jugadores[j][r]._nombre);
-// 					player=new Jugador(data[i].jugadores[j][r]._nombre,data[i].jugadores[j][r]._id);
-// 					partida.addJugador(player);
-// 				}
-// 			}
-
-
-// 			partidas.set(i+1,partida);
-// 			// usuariosOnline.set(i+1,player);
-
-// 		}
-// 		db.close();
-// 		console.log(partidas);
-// 	});
-
-// })
