@@ -104,7 +104,7 @@ class Partida {
 			// cb("hola");
 			if (!err) {
 				db.collection('partidas').find().toArray(function(err, data) {
-					console.log(data);
+					// console.log(data);
 					console.log("error: " + err);
 					// db.close();
 					cb(err,data);
@@ -149,6 +149,12 @@ class Partida {
 			});
 
 		})
+	}
+
+	iniciarPartida(){
+		this._tablero.insertarRoca();
+		this._tablero.insertarRoca();
+		this._tablero.insertarRoca();
 	}
 
 }

@@ -20,9 +20,33 @@ $(document).ready(function() {
 			}
 
 			for (var p of res.partidas) {
-				console.log(p);
-				battle(p);
+				var texto = "<div id='" + p.nombre + "' class=partida>" + p.nombre + "</div>";
+				$("#partidas").append(texto);
+			
 			}
+			
+			$(".partida").click(function(evt) {
+				console.log('datos pedidos')
+					// console.log(evt.target);
+					// localStorage.setItem("idPartida",evt.target.id)
+				var dato = {
+					id: evt.target.id
+				};
+				$.ajax({
+					url: "/batalla",
+					data: dato,
+					method: "post",
+					success: function(res, textStatus, xhr) {
+						if (res.estado == "listo") {
+
+							window.location="batalla";
+						}
+					}
+				});
+
+			});
+
+
 		}
 	});
 
@@ -40,23 +64,8 @@ function addTanque(arrayTank) {
 
 function battle(part) {
 
-	var partida = "<div id='"+part.nombre+"' class=partida>" + part.nombre + "</div>";
+	var partida = "<div id='" + part.nombre + "' class=partida>" + part.nombre + "</div>";
 	$("#partidas").append(partida);
 
-	$(".partida").click(function(evt) {
-		// console.log(evt.target);
-		// localStorage.setItem("idPartida",evt.target.id)
-		var dato={id:evt.target.id};
-		$.ajax({
-			url: "/batalla",
-			data: dato,
-			method: "post",
-			success: function(res, textStatus, xhr) {
-				if(res.estado=="listo"){
-					window.location="batalla";
-				}
-			}
-		});
 
-	});
 }

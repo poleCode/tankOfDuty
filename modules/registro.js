@@ -156,7 +156,7 @@ passport.use(new GoogleStrategy({
         callbackURL: "http://localhost:3000/login/auth/google/callback"
     },
     function(accessToken, refreshToken, profile, done) {
-        console.log(profile)
+        // console.log(profile)
         let datos = {
             id: profile.id,
             username: profile.displayName.replace(" ", ""),

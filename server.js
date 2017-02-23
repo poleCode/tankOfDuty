@@ -20,13 +20,15 @@ const mysqlconnection = {
 }
 
 let algo = new Usuario(" ", mysqlconnection);
-let partida = new Partida();
+let partida = new Partida("partida1", 8, 8);
+// partida.
 
 const app = express();
 const server = http.createServer(app);
 
 var partidasJ = [];
-
+partida.iniciarPartida();
+partidasJ.push(partida.infoPartida());
 app.use(BodyParser.json()); //Recibir peticiones POST con datos en json
 app.use(BodyParser.urlencoded({
 	extended: true
@@ -51,6 +53,21 @@ function ensureAuth(req, res, next) {
 	res.redirect('/login');
 }
 
+
+partida.cargarPartidas(function(err, data) {
+	// console.log(data)
+
+	for (var d of data) {
+		var parti = new Partida(d.nombre, d.columnas, d.filas)
+		parti.iniciarPartida();
+		partidasJ.push(parti.infoPartida());
+	}
+
+
+});
+
+
+
 //Servidor Estático.
 
 //========================================================
@@ -71,6 +88,7 @@ app.get('/iniciarPartida', function(req, res) {
 	});
 });
 
+/*
 app.post('/inicioJuego', ensureAuth, function(req, res) {
 	console.log("inicio de juego con id=" + req.user.ID)
 
@@ -109,6 +127,36 @@ app.post('/inicioJuego', ensureAuth, function(req, res) {
 	});
 
 });
+*/
+
+app.post('/inicioJuego', ensureAuth, function(req, res) {
+	// console.log("inicio de juego con id=" + req.user.ID)
+
+	// console.log('recogiendo tanques')
+	var tanques = [];
+	var error = "";
+	algo.consultarTanques(req.user.ID, (err, codeErr, rows) => {
+		if (codeErr == 0) {
+			for (var r of rows) {
+				// console.log(r);
+			}
+			tanques = rows;
+		} else {
+			// console.log("error nº " + codeErr);
+			error = codeErr;
+		}
+
+		res.json({
+			user: req.user,
+			tank: tanques,
+			error: error,
+			partidas: partidasJ
+		});
+	});
+
+
+
+});
 
 app.post('/crearTanque', ensureAuth, (req, res) => {
 	algo.crearTanque(req.user.ID, req.data, (err, codeErr) => {
@@ -121,27 +169,31 @@ app.post('/crearTanque', ensureAuth, (req, res) => {
 });
 
 app.post('/batalla', ensureAuth, function(req, res) {
-	console.log('comprobar partida');
-	console.log(req.body);
-
-	var game = partidasJ.filter(function(part) {
+	// console.log('comprobar partida');
+	// console.log(req.body);
+	console.log(partidasJ);
+	partidasJ.filter(function(part) {
+		console.log("partida nombre:" + part.nombre + " ," + req.body.id);
 		if (part.nombre == req.body.id) {
-			return part;
+			part.jugadores.push({
+				id: req.user.ID,
+				nombre: req.user.username
+			});
+			res.json({
+				estado: "listo"
+			})
 		}
+
+
 	});
 
 
-	game[0].jugadores.push({
-		id: req.user.ID,
-		nombre: req.user.username
-	});
+	// console.log(partidasJ);
 	// partida.comprobarPartida(req.body.id, function(data){
 	// 	console.log(data);
 	// })
 	// console.log(game[0]);
-	res.json({
-		estado: "listo"
-	})
+
 });
 
 app.get('/batalla', ensureAuth, function(req, res) {
@@ -153,17 +205,18 @@ app.get('/batalla', ensureAuth, function(req, res) {
 app.get('/batallaDatos', ensureAuth, (req, res) => {
 
 	// var juego = [1,2];
+
 	partidasJ.filter(function(part) {
 		// console.log('partida');
-		// console.log(part);
+		console.log(part);
 		part.jugadores.filter(function(jugador) {
-			console.log(jugador.id);
+			// console.log(jugador);
 			if (jugador.id == req.user.ID) {
 				// console.log(part);
-
 				res.json({
 					partida: part
 				})
+				res.end();
 			}
 		});
 	});
