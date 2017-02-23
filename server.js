@@ -26,8 +26,10 @@ let partida = new Partida("partida1", 8, 8);
 const app = express();
 const server = http.createServer(app);
 
+var tanques = [];
 var partidasJ = [];
 partida.iniciarPartida();
+
 partidasJ.push(partida.infoPartida());
 app.use(BodyParser.json()); //Recibir peticiones POST con datos en json
 app.use(BodyParser.urlencoded({
@@ -133,7 +135,7 @@ app.post('/inicioJuego', ensureAuth, function(req, res) {
 	// console.log("inicio de juego con id=" + req.user.ID)
 
 	// console.log('recogiendo tanques')
-	var tanques = [];
+	// var tanques = [];
 	var error = "";
 	algo.consultarTanques(req.user.ID, (err, codeErr, rows) => {
 		if (codeErr == 0) {

@@ -13,8 +13,8 @@
 	display: flex;
 	justify-content: space-between;
 	border: 1px solid black;
-	background-image: url('../img/sand_texture.jpg');
-	background-size: cover;
+	/*background-image: url('../img/sand_texture.jpg');*/
+	/*background-size: cover;*/
 }
 
 #act{

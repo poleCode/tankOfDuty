@@ -155,6 +155,8 @@ class Partida {
 		this._tablero.insertarRoca();
 		this._tablero.insertarRoca();
 		this._tablero.insertarRoca();
+
+		this._tablero.insertarTanque(new elementos.tanque("aitor","sur"));
 	}
 
 }
