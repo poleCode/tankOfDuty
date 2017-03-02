@@ -72,7 +72,7 @@ $(document).ready(function() {
 	});
 
 	$("#enmarcar button").on("click", function() {
-			console.log($("#enmarcar select").val());
+			// console.log($("#enmarcar select").val());
 			if ($("#enmarcar input").val() == "") {
 				console.log('tanque no creado')
 			} else {
@@ -80,13 +80,12 @@ $(document).ready(function() {
 					url: "/crearPartida",
 					data: {
 						nombre: $("#enmarcar input").val(),
-						// size:
+						size:$("#enmarcar select").val()
 					},
 					method: "post",
 					success: function(res, textStatus, xhr) {
 						// console.log(res.Tanque);
-						addObject(res.Tanque);
-						$("#crearTanque input:text").val() = " ";
+						
 					}
 				})
 			}

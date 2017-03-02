@@ -21,7 +21,7 @@ const mysqlconnection = {
 }
 
 let algo = new Usuario(" ", mysqlconnection);
-let partida = new Partida("partida1", 8, 8);
+// let partida = new Partida("partida1", 8, 8);
 // partida.
 
 const app = express();
@@ -29,9 +29,9 @@ const server = http.createServer(app);
 
 var tanques = [];
 var partidasJ = [];
-partida.iniciarPartida();
+// partida.iniciarPartida();
 
-partidasJ.push(partida.infoPartida());
+// partidasJ.push(partida.infoPartida());
 app.use(BodyParser.json()); //Recibir peticiones POST con datos en json
 app.use(BodyParser.urlencoded({
 	extended: true
@@ -62,7 +62,7 @@ partida.cargarPartidas(function(err, data) {
 
 	for (var d of data) {
 		var parti = new Partida(d.nombre, d.columnas, d.filas)
-		parti.iniciarPartida();
+			// parti.iniciarPartida();
 		partidasJ.push(parti.infoPartida());
 	}
 
@@ -168,7 +168,7 @@ app.post('/crearTanque', ensureAuth, (req, res) => {
 	algo.crearTanque(req.user.ID, tanque, (err, codeErr, id) => {
 
 		if (codeErr != 2) {
-			tanque.id=id;
+			tanque.id = id;
 			res.json({
 				error: codeErr,
 				Tanque: tanque
@@ -177,6 +177,13 @@ app.post('/crearTanque', ensureAuth, (req, res) => {
 
 
 	});
+});
+
+app.post('/crearPartida', ensureAuth, (req, res) => {
+
+	var tanque = new Elementos.tanque(req.body.nombre);
+
+	
 });
 
 app.post('/batalla', ensureAuth, function(req, res) {
@@ -253,3 +260,10 @@ app.get('/batallaDatos', ensureAuth, (req, res) => {
 
 
 server.listen(3000, () => console.log('Servidor comezado con express. Escoitando no porto 3000'));
+
+
+// funciones
+
+function campo() {
+
+}
