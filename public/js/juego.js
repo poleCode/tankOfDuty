@@ -22,9 +22,9 @@ $(document).ready(function() {
 			for (var p of res.partidas) {
 				var texto = "<div id='" + p.nombre + "' class=partida>" + p.nombre + "</div>";
 				$("#partidas").append(texto);
-			
+
 			}
-			
+
 			$(".partida").click(function(evt) {
 				console.log('datos pedidos')
 					// console.log(evt.target);
@@ -39,7 +39,7 @@ $(document).ready(function() {
 					success: function(res, textStatus, xhr) {
 						if (res.estado == "listo") {
 
-							window.location="batalla";
+							window.location = "batalla";
 						}
 					}
 				});
@@ -51,7 +51,45 @@ $(document).ready(function() {
 	});
 
 	$("#crearTanque input:button").on("click", function() {
-		console.log("creamos tanque " + $("#crearTanque input:text").val());
+		// console.log("creamos tanque " + $("#crearTanque input:text").val());
+		if ($("#crearTanque input:text").val() == "") {
+			console.log('tanque no creado')
+		} else {
+			$.ajax({
+				url: "/crearTanque",
+				data: {
+					nombre: $("#crearTanque input:text").val()
+				},
+				method: "post",
+				success: function(res, textStatus, xhr) {
+					// console.log(res.Tanque);
+					addObject(res.Tanque);
+					$("#crearTanque input:text").val() = " ";
+				}
+			})
+		}
+
+	});
+
+	$("#enmarcar button").on("click", function() {
+			console.log($("#enmarcar select").val());
+			if ($("#enmarcar input").val() == "") {
+				console.log('tanque no creado')
+			} else {
+				$.ajax({
+					url: "/crearPartida",
+					data: {
+						nombre: $("#enmarcar input").val(),
+						// size:
+					},
+					method: "post",
+					success: function(res, textStatus, xhr) {
+						// console.log(res.Tanque);
+						addObject(res.Tanque);
+						$("#crearTanque input:text").val() = " ";
+					}
+				})
+			}
 	})
 
 })
@@ -60,6 +98,10 @@ function addTanque(arrayTank) {
 	for (var t of arrayTank) {
 		$("#tanques ul").append("<li>" + t.ID + " -> " + t.nombre + "</li>");
 	}
+}
+
+function addObject(t) {
+	$("#tanques ul").append("<li>" + t._id + " -> " + t._nombre + "</li>");
 }
 
 function battle(part) {

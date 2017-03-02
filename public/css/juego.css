@@ -43,8 +43,17 @@ header h1{
 }
 
 #partidas{
-	border: 1px solid green;
+	/*border: 1px solid green;*/
 	width: 90%;
-	height: 30%;
+	height: 100px;
 	margin: auto;
+	overflow-y: scroll;
+}
+
+#enmarcar{
+	margin-bottom: 15px;
+}
+
+#enmarcar input{
+	margin-left: 3px;
 }

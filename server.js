@@ -11,6 +11,7 @@ const passport = require('passport');
 var config = require('./modules/conf.js');
 const Usuario = require("./modules/usuario.js");
 const Partida = require("./modules/partida.js");
+const Elementos = require("./modules/elementos.js");
 
 const mysqlconnection = {
 	user: "root",
@@ -161,11 +162,19 @@ app.post('/inicioJuego', ensureAuth, function(req, res) {
 });
 
 app.post('/crearTanque', ensureAuth, (req, res) => {
-	algo.crearTanque(req.user.ID, req.data, (err, codeErr) => {
 
-		res.json({
-			error: codeErr
-		});
+	var tanque = new Elementos.tanque(req.body.nombre);
+
+	algo.crearTanque(req.user.ID, tanque, (err, codeErr, id) => {
+
+		if (codeErr != 2) {
+			tanque.id=id;
+			res.json({
+				error: codeErr,
+				Tanque: tanque
+			});
+		}
+
 
 	});
 });

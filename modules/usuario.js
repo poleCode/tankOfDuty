@@ -308,7 +308,7 @@ class usuario {
                 if (err) {
                     return cb(err, 2);
                 } else {
-                    return cb(err, 0);
+                    return cb(err, 0,rows.insertId);
                 }
             });
         });

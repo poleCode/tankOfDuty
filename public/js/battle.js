@@ -37,14 +37,38 @@ $(document).ready(function() {
 	})
 
 
-	// $("#left input").click(function(){
-	// 	for(var t of objetos){
-	// 		if(t._tipo == "tanque"){
-	// 			t._o="sur"
-	// 		}
-	// 		console.log(t);
-	// 	}
-	// })
+	$("#left input").click(function(){
+		for(var t of objetos){
+			if(t._tipo == "tanque"){
+				t._o="oeste"
+				orientacion(t);
+			}
+		}
+	})
+	$("#right input").click(function(){
+		for(var t of objetos){
+			if(t._tipo == "tanque"){
+				t._o="este"
+				orientacion(t);
+			}
+		}
+	})
+	$("#up").click(function(){
+		for(var t of objetos){
+			if(t._tipo == "tanque"){
+				t._o="norte"
+				orientacion(t);
+			}
+		}
+	})
+	$("#down").click(function(){
+		for(var t of objetos){
+			if(t._tipo == "tanque"){
+				t._o="sur"
+				orientacion(t);
+			}
+		}
+	})
 })
 
 
