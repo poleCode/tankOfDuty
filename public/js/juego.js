@@ -16,7 +16,7 @@ $(document).ready(function() {
 			personalId = res.user.ID;
 
 			if (res.error == 0) {
-				addTanque(res.tank);
+				addTanque(res.tanke);
 			}
 
 			for (var p of res.partidas) {
@@ -64,7 +64,7 @@ $(document).ready(function() {
 				success: function(res, textStatus, xhr) {
 					// console.log(res.Tanque);
 					addObject(res.Tanque);
-					$("#crearTanque input:text").val() = " ";
+					$("#crearTanque>input").val = "";
 				}
 			})
 		}
@@ -95,12 +95,13 @@ $(document).ready(function() {
 
 function addTanque(arrayTank) {
 	for (var t of arrayTank) {
-		$("#tanques ul").append("<li>" + t.ID + " -> " + t.nombre + "</li>");
+		console.log(t);
+		$("#tanques ul").append("<li id='"+t.ID+"'>"+ t.nombre + "</li>");
 	}
 }
 
 function addObject(t) {
-	$("#tanques ul").append("<li>" + t._id + " -> " + t._nombre + "</li>");
+	$("#tanques ul").append("<li id='"+t.ID+"'>"+ t.nombre + "</li>");
 }
 
 function battle(part) {

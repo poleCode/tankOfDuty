@@ -9,6 +9,7 @@ class usuario {
             this._foto = 'https://avatars1.githubusercontent.com/u/20266135?v=3&s=460';
             this._password = null;
             this._email = null;
+            this._tanks=[];
         }
         // ---- Getters ------ //
     get nombre() {
@@ -45,6 +46,9 @@ class usuario {
     }
     set password(value) {
         this._password = value;
+    }
+    set id(value) {
+        this._id = value;
     }
 
     // ---- Funciones ------ //

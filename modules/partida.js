@@ -66,8 +66,9 @@ class Partida {
 
 	}
 
-	addJugador(jugador) {
-		this._jugadores.set(jugador.id, jugador);
+	addJugador(idJugador, tanque) {
+		this._jugadores.set(idJugador,tanque.id);
+		this._tablero.insertarTanque(tanque);
 	}
 
 	guardarPartida() {
