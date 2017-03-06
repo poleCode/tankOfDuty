@@ -30,6 +30,7 @@ const server = http.createServer(app);
 var tanques = [];
 var partidasJ = [];
 var usuarios = [];
+var asignado=null;
 // partida.iniciarPartida();
 
 // partidasJ.push(partida.infoPartida());
@@ -143,9 +144,9 @@ app.post('/inicioJuego', ensureAuth, function(req, res) {
 	algo.consultarTanques(req.user.ID, (err, codeErr, rows) => {
 		if (codeErr == 0) {
 			for (var r of rows) {
-				let tank=new Elementos.tanque(r.nombre);
-				tank.id=r.id;
-				console.log(r);
+				let tank = new Elementos.tanque(r.nombre);
+				tank.id = r.id;
+				// console.log(r);
 				usuario._tanks.push(tank);
 			}
 			tanques = rows;
@@ -155,8 +156,8 @@ app.post('/inicioJuego', ensureAuth, function(req, res) {
 		}
 		usuarios.push(usuario);
 		// console.log(usuarios);
-		for(let t of usuarios){
-			console.log(t);
+		for (let t of usuarios) {
+			// console.log(t);
 			// console.log(t._tanks);
 		}
 		res.json({
@@ -177,8 +178,8 @@ app.post('/inicioJuego', ensureAuth, function(req, res) {
 app.post('/crearTanque', ensureAuth, (req, res) => {
 
 	var tanque = new Elementos.tanque(req.body.nombre);
-	var usuario=usuarios.find((user)=>{
-		if(user.id==req.user.ID) return user;
+	var usuario = usuarios.find((user) => {
+		if (user.id == req.user.ID) return user;
 	})
 
 
@@ -188,7 +189,7 @@ app.post('/crearTanque', ensureAuth, (req, res) => {
 		if (codeErr != 2) {
 			tanque.id = id;
 			usuario._tanks.push(tanque);
-			console.log(usuarios);
+			// console.log(usuarios);
 			res.json({
 				error: codeErr,
 				Tanque: tanque
@@ -203,15 +204,42 @@ app.post('/crearTanque', ensureAuth, (req, res) => {
  * Llamada para crear partida
  */
 app.post('/crearPartida', ensureAuth, (req, res) => {
-	var tamaño = campo(req.body.size);
-	var partida = new Partida(req.body.nombre, tamaño, tamaño);
 
+	if (asignado == null) {
+		res.json({
+			err: 1
+		})
+	} else {
+		var tamaño = campo(req.body.size);
+		console.log(tamaño);
+		var partida = new Partida(req.body.nombre, tamaño, tamaño);
 
-	// partida.addJugador(res.user.ID,);
+		// partida.addJugador(req.user.ID, asignado);
+		// var cantidad=Math.floor((Math.random()*(tamaño*2))+(tamaño/2));
+		partida.insertarRocas(tamaño);
 
+		partidasJ.push(partida.infoPartida());
+
+		res.json({
+			err:0,
+			batallas:partidasJ
+		})
+	}
 
 
 });
+
+
+app.post('/asignarTanque', ensureAuth, (req, res) => {
+	// console.log("asignar tanques");
+	tanques.filter(function(tank) {
+		if (req.body.id == tank.ID) {
+			asignado = tank;
+		}
+	})
+	console.log(asignado);
+	res.json({envio:"ok"});
+})
 
 app.post('/batalla', ensureAuth, function(req, res) {
 	// console.log('comprobar partida');

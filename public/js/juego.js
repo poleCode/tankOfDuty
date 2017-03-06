@@ -19,32 +19,8 @@ $(document).ready(function() {
 				addTanque(res.tanke);
 			}
 
-			for (var p of res.partidas) {
-				var texto = "<div id='" + p.nombre + "' class=partida>" + p.nombre + "</div>";
-				$("#partidas").append(texto);
+			battle(res.partidas);
 
-			}
-
-			$(".partida").click(function(evt) {
-				console.log('datos pedidos')
-					// console.log(evt.target);
-					// localStorage.setItem("idPartida",evt.target.id)
-				var dato = {
-					id: evt.target.id
-				};
-				$.ajax({
-					url: "/batalla",
-					data: dato,
-					method: "post",
-					success: function(res, textStatus, xhr) {
-						if (res.estado == "listo") {
-
-							window.location = "batalla";
-						}
-					}
-				});
-
-			});
 
 
 		}
@@ -72,42 +48,89 @@ $(document).ready(function() {
 	});
 
 	$("#enmarcar button").on("click", function() {
-			// console.log($("#enmarcar select").val());
-			if ($("#enmarcar input").val() == "") {
-				console.log('tanque no creado')
-			} else {
-				$.ajax({
-					url: "/crearPartida",
-					data: {
-						nombre: $("#enmarcar input").val(),
-						size:$("#enmarcar select").val()
-					},
-					method: "post",
-					success: function(res, textStatus, xhr) {
-						// console.log(res.Tanque);
-						
+		// console.log($("#enmarcar select").val());
+		if ($("#enmarcar input").val() == "") {
+			console.log('tanque no creado')
+		} else {
+			$.ajax({
+				url: "/crearPartida",
+				data: {
+					nombre: $("#enmarcar input").val(),
+					size: $("#enmarcar select").val()
+				},
+				method: "post",
+				success: function(res, textStatus, xhr) {
+					console.log(res);
+					if (res.err == 1) {
+						alert("es obligatorio asignar un tanque")
+					} else if (res.err == 0) {
+						$("#enmarcar input").val("");
+						$("#partidas").empty();
+						battle(res.batallas);
 					}
-				})
-			}
+
+				}
+			})
+		}
 	})
+
+
 
 })
 
 function addTanque(arrayTank) {
 	for (var t of arrayTank) {
 		console.log(t);
-		$("#tanques ul").append("<li id='"+t.ID+"'>"+ t.nombre + "</li>");
+		$("#tanques ul").append("<li id='" + t.ID + "'>" + t.nombre + "</li>");
 	}
+
+	$("#tanques li").on("click", function() {
+		console.log($(this))
+		$(this).parent().children().css("text-decoration", "none");
+		$(this).css("text-decoration", "underline");
+		$.ajax({
+			url: "/asignarTanque",
+			data: {
+				id: $(this).attr("id")
+			},
+			method: "post",
+			success: function(res, textStatus, xhr) {
+
+			}
+		})
+	});
+
 }
 
 function addObject(t) {
-	$("#tanques ul").append("<li id='"+t.ID+"'>"+ t.nombre + "</li>");
+	$("#tanques ul").append("<li id='" + t.ID + "'>" + t.nombre + "</li>");
 }
 
 function battle(part) {
+	// console.log(part);
+	for (let b of part) {
+		var partida = "<div id='" + b.nombre + "' class=partida>" + b.nombre + "</div>";
+		$("#partidas").append(partida);
+	}
 
-	var partida = "<div id='" + part.nombre + "' class=partida>" + part.nombre + "</div>";
-	$("#partidas").append(partida);
+	$(".partida").click(function(evt) {
+		console.log('datos pedidos')
+			// console.log(evt.target);
+			// localStorage.setItem("idPartida",evt.target.id)
+		var dato = {
+			id: evt.target.id
+		};
+		$.ajax({
+			url: "/batalla",
+			data: dato,
+			method: "post",
+			success: function(res, textStatus, xhr) {
+				if (res.estado == "listo") {
 
+					window.location = "batalla";
+				}
+			}
+		});
 
+	});
 }

@@ -11,13 +11,13 @@ class Partida {
 
 	constructor(nombre, columnas, filas, tick) {
 
-		this._nombre=nombre;
+		this._nombre = nombre;
 		this._tablero = new tablero(nombre, columnas, filas);
 		this._jugadores = new Map();
 		this._tick = tick || 3000;
 	}
 
-	get nombre(){
+	get nombre() {
 		return this._nombre;
 	}
 
@@ -25,14 +25,17 @@ class Partida {
 		this._tick = value;
 	}
 
-	infoPartida(){
-		let jugadores=[];
-		this._jugadores.forEach( function(element) {
-			jugadores.push({id:element.id,nombre:element.nombre});
+	infoPartida() {
+		let jugadores = [];
+		this._jugadores.forEach(function(element) {
+			jugadores.push({
+				id: element.id,
+				nombre: element.nombre
+			});
 		});
 		return {
-			nombre:this.nombre,
-			tablero:this._tablero.info,
+			nombre: this.nombre,
+			tablero: this._tablero.info,
 			jugadores: jugadores,
 			dimensiones: this._tablero.dimension
 		}
@@ -67,8 +70,14 @@ class Partida {
 	}
 
 	addJugador(idJugador, tanque) {
-		this._jugadores.set(idJugador,tanque.id);
+		this._jugadores.set(idJugador, tanque.ID);
 		this._tablero.insertarTanque(tanque);
+	}
+
+	insertarRocas(cantidad) {
+		for (var i = 0; i < cantidad; i++) {
+			this._tablero.insertarRoca();
+		}
 	}
 
 	guardarPartida() {
@@ -108,11 +117,11 @@ class Partida {
 					// console.log(data);
 					console.log("error: " + err);
 					// db.close();
-					cb(err,data);
+					cb(err, data);
 				});
-			}else {
+			} else {
 				console.log('error conexion');
-				cb("error","cpnexoin");
+				cb("error", "cpnexoin");
 			}
 
 			// cb(data2);
@@ -152,7 +161,7 @@ class Partida {
 		})
 	}
 
-	iniciarPartida(){
+	iniciarPartida() {
 		this._tablero.insertarRoca();
 		this._tablero.insertarRoca();
 		this._tablero.insertarRoca();
