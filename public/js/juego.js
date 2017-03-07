@@ -1,5 +1,5 @@
 "use strict";
-
+var tanqueid=null;
 // const Partida = require("./modules/partida.js");
 
 var personalId = null;
@@ -52,13 +52,16 @@ $(document).ready(function() {
 	$("#enmarcar button").on("click", function() {
 		// console.log($("#enmarcar select").val());
 		if ($("#enmarcar input").val() == "") {
-			console.log('tanque no creado')
+			console.log('partida no creada')
+		}else if (tanqueid == null) {
+			alert("tanque no asignado");
 		} else {
 			$.ajax({
 				url: "/crearPartida",
 				data: {
 					nombre: $("#enmarcar input").val(),
-					size: $("#enmarcar select").val()
+					size: $("#enmarcar select").val(),
+					tanqueId:tanqueid
 				},
 				method: "post",
 				success: function(res, textStatus, xhr) {
@@ -87,19 +90,10 @@ function addTanque(arrayTank) {
 	}
 
 	$("#tanques li").on("click", function() {
-		console.log($(this))
+		
 		$(this).parent().children().css("text-decoration", "none");
 		$(this).css("text-decoration", "underline");
-		$.ajax({
-			url: "/asignarTanque",
-			data: {
-				id: $(this).attr("id")
-			},
-			method: "post",
-			success: function(res, textStatus, xhr) {
-
-			}
-		})
+		tanqueid=$(this).attr("id")
 	});
 
 }

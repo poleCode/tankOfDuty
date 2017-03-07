@@ -30,7 +30,6 @@ const server = http.createServer(app);
 var tanques = [];
 var partidasJ = [];
 var usuarios = [];
-var asignado=null;
 // partida.iniciarPartida();
 
 // partidasJ.push(partida.infoPartida());
@@ -220,21 +219,19 @@ app.post('/crearTanque', ensureAuth, (req, res) => {
  */
 app.post('/crearPartida', ensureAuth, (req, res) => {
 
-	if (asignado == null) {
-		res.json({
-			err: 1
-		})
-	} else {
-		console.log(asignado)
+		let tank=asignarTanque(req.user.ID,req.body.tanqueId);
+		console.log(tank);		
+	
+		// console.log(asignado)
 		var tamaño = campo(req.body.size);
-		console.log(tamaño);
+		// console.log(tamaño);
 		var partida = new Partida(req.body.nombre, tamaño, tamaño);
 
-		partida.addJugador(req.user.ID, asignado);
+		partida.addJugador(req.user.ID, tank);
 		// var cantidad=Math.floor((Math.random()*(tamaño*2))+(tamaño/2));
 		partida.insertarRocas(tamaño);
 		// console.log(asignado.nombre);
-		partida.addTanque(asignado);
+		partida.addTanque(tank);
 
 		partidasJ.push(partida);
 
@@ -242,37 +239,15 @@ app.post('/crearPartida', ensureAuth, (req, res) => {
 		partidasJ.forEach( function(element) {
 			partidasInfo.push(element.infoPartida())
 		});
+		console.log("1 "+partidasInfo);
 		res.json({
 			err:0,
 			batallas:partidasInfo
 		})
-	}
 
 
 });
 
-
-app.post('/asignarTanque', ensureAuth, (req, res) => {
-	// console.log(tanques);
-	let user=usuarios.filter(function(usera){
-		if(usera.id==req.user.ID){
-			return usera;
-		}
-	})
-
-	user[0].tanks.filter(function(tanque){
-		if (req.body.id == tanque.id) {
-			asignado = tanque;
-		}
-	})
-	// tanques.filter(function(tank) {
-	// 	if (req.body.id == tank._id) {
-	// 		asignado = tank;
-	// 	}
-	// })
-	console.log(asignado);
-	res.json({envio:"ok"});
-})
 
 app.post('/batalla', ensureAuth, function(req, res) {
 	// console.log('comprobar partida');
@@ -299,11 +274,7 @@ app.post('/batalla', ensureAuth, function(req, res) {
 			res.json({
 				estado: "listo"
 			})
-	// console.log(partidasJ);
-	// partida.comprobarPartida(req.body.id, function(data){
-	// 	console.log(data);
-	// })
-	// console.log(game[0]);
+
 
 });
 
@@ -328,23 +299,6 @@ app.get('/batallaDatos', ensureAuth, (req, res) => {
 	console.log(partidaSeleccionada)
 	res.json({partida:partidaSeleccionada[0].infoPartida()})
 
-	// console.log(juego[0]);
-
-
-	// var juego = partidasJ.filter(function(part) {
-	// 	if (part.jugadores.filter(function(jugador) {
-	// 			if (jugador.id == req.user.ID) {
-	// 				return part
-	// 			}
-	// 		})) 
-	// 		console.log(part._jugadores);
-	// 		return part;
-	// 	}
-	// })
-	// console.log(juego[0]);
-	// res.json({
-	// 	estado: juego[0]
-	// });
 })
 
 
@@ -353,6 +307,11 @@ server.listen(3000, () => console.log('Servidor comezado con express. Escoitando
 
 // funciones
 
+/**
+ * tamaño del tablero
+ * @param  {string} talla tamaño
+ * @return {int}       numero
+ */
 function campo(talla) {
 	switch (talla) {
 		case "xs":
@@ -374,4 +333,26 @@ function campo(talla) {
 			// statements_def
 			break;
 	}
+}
+
+/**
+ * Asignacion de un tanque
+ * @param  {int} usuarioID id del usuario
+ * @param  {int} tanqueID  id del tanque
+ * @return {object}           tanque
+ */
+function asignarTanque(usuarioID,tanqueID){
+	let user=usuarios.filter(function(usera){
+		if(usera.id==usuarioID){
+			return usera;
+		}
+	})
+
+	let tanque=user[0].tanks.filter(function(tan){
+		if (tan.id == tanqueID) {
+			return tan;
+		}
+	})
+	
+	return tanque[0];
 }
