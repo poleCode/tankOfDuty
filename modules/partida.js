@@ -26,24 +26,24 @@ class Partida {
 	}
 
 	infoPartida() {
-		let jugadores = [];
-		this._jugadores.forEach(function(element) {
-			jugadores.push({
-				id: element.id,
-				nombre: element.nombre
-			});
-		});
+		// let jugadores = [];
+		// this._jugadores.forEach(function(element) {
+		// 	jugadores.push({
+		// 		id: element.id,
+		// 		nombre: element.nombre
+		// 	});
+		// });
 		return {
 			nombre: this.nombre,
 			tablero: this._tablero.info,
-			jugadores: jugadores,
+			jugadores: this._jugadores,
 			dimensiones: this._tablero.dimension
 		}
 	}
 
-	addTanque(nombre) {
-		let taque = new elementos.tanque(nombre);
-		this._tablero.insertar(tanque);
+	addTanque(tanque) {
+
+		this._tablero.insertarTanque(tanque);
 	}
 
 	movTanque(nombre) {
@@ -70,7 +70,7 @@ class Partida {
 	}
 
 	addJugador(idJugador, tanque) {
-		this._jugadores.set(idJugador, tanque.ID);
+		this._jugadores.set(idJugador, tanque.id);
 		this._tablero.insertarTanque(tanque);
 	}
 

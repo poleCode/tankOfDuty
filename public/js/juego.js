@@ -4,12 +4,14 @@
 
 var personalId = null;
 $(document).ready(function() {
+
 	console.log("pedimos datos");
 	$.ajax({
 		url: "/inicioJuego",
 		data: {},
 		method: "post",
 		success: function(res, textStatus, xhr) {
+			$("#tanques>ul").empty();
 			console.log(res);
 			$("#nombre").text(res.user.username);
 			$("#usuario img").attr("src", res.user.photo);
@@ -40,7 +42,7 @@ $(document).ready(function() {
 				success: function(res, textStatus, xhr) {
 					// console.log(res.Tanque);
 					addObject(res.Tanque);
-					$("#crearTanque>input").val = "";
+					$("#crearTanque>input").val("");
 				}
 			})
 		}
@@ -81,7 +83,7 @@ $(document).ready(function() {
 function addTanque(arrayTank) {
 	for (var t of arrayTank) {
 		console.log(t);
-		$("#tanques ul").append("<li id='" + t.ID + "'>" + t.nombre + "</li>");
+		$("#tanques ul").append("<li id='" + t.id + "'>" + t.nombre + "</li>");
 	}
 
 	$("#tanques li").on("click", function() {

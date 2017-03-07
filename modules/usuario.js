@@ -12,6 +12,10 @@ class usuario {
             this._tanks=[];
         }
         // ---- Getters ------ //
+    get tanks(){
+        return this._tanks;
+    }
+
     get nombre() {
         return this._nombre;
     }

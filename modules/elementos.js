@@ -27,6 +27,22 @@ class Tanque {
 	}
 
 	// ------ GETTERS ------ //
+	
+	get info(){
+		return {
+			id:this._id,
+			jugador:this._jugador,
+			nombre:this._nombre,
+			vida:this._vida,
+			municion:this._muni,
+			tipo:this._tipo,
+			IA:this._IA,
+			x: this._x,
+			y: this._y,
+			o: this._o
+		};
+	}
+	
 	/**
 	 * Devuelve la posición x e y del tanque junto a su orientación
 	 * @return {Object} devuelve las variables o,x e y en un objeto JSON
