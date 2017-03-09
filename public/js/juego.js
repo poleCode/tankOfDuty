@@ -1,5 +1,5 @@
 "use strict";
-var tanqueid=null;
+var tanqueid = null;
 // const Partida = require("./modules/partida.js");
 
 var personalId = null;
@@ -42,7 +42,7 @@ $(document).ready(function() {
 				success: function(res, textStatus, xhr) {
 					// console.log(res.Tanque);
 					addObject(res.Tanque);
-					$("#crearTanque>input").val("");
+					$("#crearTanque>input:text").val("");
 				}
 			})
 		}
@@ -53,7 +53,7 @@ $(document).ready(function() {
 		// console.log($("#enmarcar select").val());
 		if ($("#enmarcar input").val() == "") {
 			console.log('partida no creada')
-		}else if (tanqueid == null) {
+		} else if (tanqueid == null) {
 			alert("tanque no asignado");
 		} else {
 			$.ajax({
@@ -61,7 +61,7 @@ $(document).ready(function() {
 				data: {
 					nombre: $("#enmarcar input").val(),
 					size: $("#enmarcar select").val(),
-					tanqueId:tanqueid
+					tanqueId: tanqueid
 				},
 				method: "post",
 				success: function(res, textStatus, xhr) {
@@ -90,10 +90,10 @@ function addTanque(arrayTank) {
 	}
 
 	$("#tanques li").on("click", function() {
-		
+
 		$(this).parent().children().css("text-decoration", "none");
 		$(this).css("text-decoration", "underline");
-		tanqueid=$(this).attr("id")
+		tanqueid = $(this).attr("id")
 	});
 
 }
@@ -110,23 +110,25 @@ function battle(part) {
 	}
 
 	$(".partida").click(function(evt) {
-		console.log('datos pedidos')
-			// console.log(evt.target);
-			// localStorage.setItem("idPartida",evt.target.id)
-		var dato = {
-			id: evt.target.id
-		};
-		$.ajax({
-			url: "/batalla",
-			data: dato,
-			method: "post",
-			success: function(res, textStatus, xhr) {
-				if (res.estado == "listo") {
+		if (tanqueid == null) {
+			alert("tanque no asignado");
+		} else {
+			var dato = {
+				id: evt.target.id,
+				tanque:tanqueid
+			};
+			$.ajax({
+				url: "/batalla",
+				data: dato,
+				method: "post",
+				success: function(res, textStatus, xhr) {
+					if (res.estado == "listo") {
 
-					window.location = "batalla";
+						window.location = "batalla";
+					}
 				}
-			}
-		});
+			});
+		}
 
 	});
 }

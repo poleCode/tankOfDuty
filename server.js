@@ -58,19 +58,6 @@ function ensureAuth(req, res, next) {
 }
 
 
-// partida.cargarPartidas(function(err, data) {
-// 	// console.log(data)
-
-// 	for (var d of data) {
-// 		var parti = new Partida(d.nombre, d.columnas, d.filas)
-// 			// parti.iniciarPartida();
-// 		partidasJ.push(parti.infoPartida());
-// 	}
-
-
-// });
-
-
 
 //Servidor Estático.
 
@@ -92,46 +79,7 @@ app.get('/iniciarPartida', function(req, res) {
 	});
 });
 
-/*
-app.post('/inicioJuego', ensureAuth, function(req, res) {
-	console.log("inicio de juego con id=" + req.user.ID)
 
-	console.log('recogiendo tanques')
-	var tanques = [];
-	var error = "";
-	algo.consultarTanques(req.user.ID, (err, codeErr, rows) => {
-		if (codeErr == 0) {
-			for (var r of rows) {
-				console.log(r);
-			}
-			tanques = rows;
-		} else {
-			console.log("error nº " + codeErr);
-			error = codeErr;
-		}
-
-		partida.cargarPartidas(function(err, data) {
-			// console.log(data)
-			partidasJ = []
-			for (var d of data) {
-				var parti = new Partida(d.nombre, d.columnas, d.filas)
-				partidasJ.push(parti.infoPartida());
-			}
-			console.log(partidasJ);
-
-			res.json({
-				user: req.user,
-				tank: tanques,
-				error: error,
-				partidas: partidasJ
-			});
-		});
-
-
-	});
-
-});
-*/
 
 app.post('/inicioJuego', ensureAuth, function(req, res) {
 	// console.log("inicio de juego con id=" + req.user.ID)
@@ -171,8 +119,8 @@ app.post('/inicioJuego', ensureAuth, function(req, res) {
 		for(let p of partidasJ){
 			partidasInfo.push(p.infoPartida());
 		}
-		console.log('informacion de tanques');
-		console.log(tankinfo);
+		// console.log('informacion de tanques');
+		// console.log(tankinfo);
 
 		res.json({
 			user: req.user,
@@ -257,20 +205,23 @@ app.post('/batalla', ensureAuth, function(req, res) {
 		// console.log("partida nombre:" + part.nombre + " ," + req.body.id);
 		if (part.nombre == req.body.id) {
 			
+			if(!part._jugadores.get(req.user.ID)){
+				let tanque=asignarTanque(req.user.ID,req.body.tanque);
+				part.addJugador(req.user.ID, tanque);
+				part.addTanque(tanque);
+			}
 			return part;
 			
 		}else{
 			console.log('antes foreach');
 			console.log(part);
-			//part.jugadores.delete(req.user.ID)
-			part.jugadores.remove(req.user.ID)
+			
+			part._jugadores.delete(req.user.ID)
 		}
 
 
 	});
-	console.log(partidasJ);
-	console.log('partida encontrada')
-	console.log(partida);
+	
 			res.json({
 				estado: "listo"
 			})
