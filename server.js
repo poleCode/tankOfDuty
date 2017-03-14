@@ -181,7 +181,6 @@ app.post('/crearPartida', ensureAuth, (req, res) => {
 		// var cantidad=Math.floor((Math.random()*(tamaño*2))+(tamaño/2));
 		partida.insertarRocas(tamaño);
 		// console.log(asignado.nombre);
-		partida.addTanque(tank);
 
 		partidasJ.push(partida);
 
@@ -200,25 +199,25 @@ app.post('/crearPartida', ensureAuth, (req, res) => {
 
 
 app.post('/batalla', ensureAuth, function(req, res) {
-	// console.log('comprobar partida');
-	// console.log(req.body);
-	console.log(partidasJ);
+	
+	
 	let partida=partidasJ.filter(function(part) {
-		// console.log("partida nombre:" + part.nombre + " ," + req.body.id);
+		
 		if (part.nombre == req.body.id) {
 			
-			if(!part._jugadores.get(req.user.ID)){
+			if(!part.jugadores.get(req.user.ID)){
 				let tanque=asignarTanque(req.user.ID,req.body.tanque);
 				part.addJugador(req.user.ID, tanque);
 				part.addTanque(tanque);
+				console.log('añadido tanque '+req.body.tanque);
 			}
 			return part;
 			
 		}else{
 			// console.log('antes foreach');
 			// console.log(part);
-			
-			part._jugadores.delete(req.user.ID)
+			console.log('Eliminado jugador '+req.user.ID);
+			part.jugadores.delete(req.user.ID)
 		}
 
 
@@ -242,8 +241,6 @@ app.get('/batallaDatos', ensureAuth, (req, res) => {
 	console.log(req.user.ID);
 
 	let partidaSeleccionada=partidasJ.filter(function(part) {
-		// console.log('partida');
-		// console.log(part);
 		if(part._jugadores.get(req.user.ID)){
 			return part
 		}
@@ -267,11 +264,43 @@ app.post('/left',ensureAuth,function(req,res){
 	});
 });
 
+app.post('/action',ensureAuth,function(req,res){
+
+	let tanqueId=null;
+
+	var parSel=partidasJ.filter(function(part){
+		if(part.nombre==req.body.nombre){
+			return part;
+		}
+	});
+
+	tanqueId=parSel[0].jugadores.get(req.user.ID);
+
+	switch (req.body.direccion) {
+		case "Right":
+			parSel[0].girarTanque(tanqueId,req.body.direccion);
+			break;
+		case "Left":
+			parSel[0].girarTanque(tanqueId,req.body.direccion);
+			break;
+		case "Up":
+			parSel[0].movTanque(tanqueId);
+			break;
+		default:
+			// statements_def
+			break;
+	}
+	
+
+	res.json({partida:parSel[0].infoPartida()});
+
+});
 
 server.listen(3000, () => console.log('Servidor comezado con express. Escoitando no porto 3000'));
 
 
 // funciones
+
 
 /**
  * tamaño del tablero

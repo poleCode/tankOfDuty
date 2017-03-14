@@ -21,6 +21,10 @@ class Partida {
 		return this._nombre;
 	}
 
+	get jugadores(){
+		return this._jugadores;
+	}
+
 	set tick(value) {
 		this._tick = value;
 	}
@@ -46,8 +50,8 @@ class Partida {
 		this._tablero.insertarTanque(tanque);
 	}
 
-	movTanque(nombre) {
-		this._tablero.mover(nombre);
+	movTanque(id) {
+		this._tablero.mover(id,"tanque");
 	}
 
 	shootTanque(nombre) {

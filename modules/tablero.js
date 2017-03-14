@@ -257,7 +257,7 @@ class Tablero {
 		let objeto = this._tanques.get(idTanque);
 		let orientaciones = ["norte", "este", "sur", "oeste"];
 		let index = orientaciones.indexOf(objeto.pos.o);
-		if(direccion=="derecha"){
+		if(direccion=="Right"){
 			objeto.o = index == orientaciones.length - 1 ? orientaciones[0] : orientaciones[index + 1];
 		}else{
 			objeto.o = index === 0 ? orientaciones[orientaciones.length - 1] : orientaciones[index - 1];
