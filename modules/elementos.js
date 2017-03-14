@@ -154,6 +154,15 @@ class Roca {
 		this._tipo = "roca";
 	}
 		// ------ GETTERS ------ //
+		// 
+	get info(){
+		return {
+			vida:this._vida,
+			tipo:this._tipo,
+			x: this._x,
+			y: this._y,
+		};
+	}
 
 	/**
 	 * Devuelve la posición x e y de la roca

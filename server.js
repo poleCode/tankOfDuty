@@ -21,7 +21,10 @@ const mysqlconnection = {
 }
 
 let algo = new Usuario(" ", mysqlconnection);
+
 // let partida = new Partida("partida1", 8, 8);
+
+
 // partida.
 
 const app = express();
@@ -47,7 +50,6 @@ app.use(expressSession({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 
 function ensureAuth(req, res, next) {
@@ -168,7 +170,7 @@ app.post('/crearTanque', ensureAuth, (req, res) => {
 app.post('/crearPartida', ensureAuth, (req, res) => {
 
 		let tank=asignarTanque(req.user.ID,req.body.tanqueId);
-		console.log(tank);		
+		// console.log(tank);		
 	
 		// console.log(asignado)
 		var tamaño = campo(req.body.size);
@@ -213,8 +215,8 @@ app.post('/batalla', ensureAuth, function(req, res) {
 			return part;
 			
 		}else{
-			console.log('antes foreach');
-			console.log(part);
+			// console.log('antes foreach');
+			// console.log(part);
 			
 			part._jugadores.delete(req.user.ID)
 		}
@@ -241,16 +243,29 @@ app.get('/batallaDatos', ensureAuth, (req, res) => {
 
 	let partidaSeleccionada=partidasJ.filter(function(part) {
 		// console.log('partida');
-		console.log(part);
+		// console.log(part);
 		if(part._jugadores.get(req.user.ID)){
 			return part
 		}
 		
 	});
-	console.log(partidaSeleccionada)
-	res.json({partida:partidaSeleccionada[0].infoPartida()})
+	console.log(partidaSeleccionada[0].infoPartida().tablero);
+	res.json({partida:partidaSeleccionada[0].infoPartida()});
 
 })
+
+app.post('/left',ensureAuth,function(req,res){
+
+	partidasJ.filter(function(part){
+		if(part.nombre==req.body.partida){
+			var idtanque=null;
+			if(part._jugadores.get(req.user.ID)){
+				idtanque=part._jugadores.get(req.user.ID);
+			}
+			part._tablero.mover(idtanque, "number");
+		}
+	});
+});
 
 
 server.listen(3000, () => console.log('Servidor comezado con express. Escoitando no porto 3000'));

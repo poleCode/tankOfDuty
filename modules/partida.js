@@ -54,8 +54,8 @@ class Partida {
 		this._tablero.disparar(nombre);
 	}
 
-	girarTanque(nombre, direccion) {
-		this._tablero.mover(nombre, direccion);
+	girarTanque(id, direccion) {
+		this._tablero.girar(id, direccion);
 	}
 
 	empezarPartida() {
