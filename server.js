@@ -13,6 +13,7 @@ const Usuario = require("./modules/usuario.js");
 const Partida = require("./modules/partida.js");
 const Elementos = require("./modules/elementos.js");
 
+
 const mysqlconnection = {
 	user: "root",
 	password: "root",
@@ -29,6 +30,7 @@ let algo = new Usuario(" ", mysqlconnection);
 
 const app = express();
 const server = http.createServer(app);
+const io=require("socket.io")(server);
 
 var tanques = [];
 var partidasJ = [];
@@ -264,7 +266,18 @@ app.post('/left',ensureAuth,function(req,res){
 	});
 });
 
+io.on('connection',function(socket){
+		socket.on('patata', function(data){
+			console.log(data);
+		})
+	});
+
+
 app.post('/action',ensureAuth,function(req,res){
+
+
+	io.sockets.emit('mensajes','Ejecutamos socket');
+
 
 	let tanqueId=null;
 

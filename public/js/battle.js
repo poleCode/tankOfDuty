@@ -2,11 +2,17 @@ var nombrePartida = null;
 
 $(document).ready(function() {
 
+	var socket=io.connect("http://localhost:3000",{'forceNew':true});
+
+	socket.on('mensajes',function(data){
+		console.log(data);
+	});
+
 			$.ajax({
 				url: "/batallaDatos",
 				method: "get",
 				success: function(res, textStatus, xhr) {
-					console.log(res);
+					// console.log(res);
 					pintarTablero(res.partida.nombre, res.partida.tablero.dimensiones)
 					cargarObjetos(res.partida.tablero.datos);
 				}
@@ -14,6 +20,8 @@ $(document).ready(function() {
 
 
 			$(".action").click(function() {
+				console.log("hacemos emit")
+				socket.emit('patata','nos movemos');
 
 				$.ajax({
 					url: "/action",
@@ -23,7 +31,7 @@ $(document).ready(function() {
 					},
 					method: "post",
 					success: function(res, textStatus, xhr) {
-						console.log(res.partida.tablero.datos)
+						// console.log(res.partida.tablero.datos)
 						pintarTablero(res.partida.nombre, res.partida.tablero.dimensiones)
 						cargarObjetos(res.partida.tablero.datos);
 					}
