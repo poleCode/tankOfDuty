@@ -30,7 +30,7 @@ let algo = new Usuario(" ", mysqlconnection);
 
 const app = express();
 const server = http.createServer(app);
-const io=require("socket.io")(server);
+const io = require("socket.io")(server);
 
 var tanques = [];
 var partidasJ = [];
@@ -89,14 +89,14 @@ app.post('/inicioJuego', ensureAuth, function(req, res) {
 	// console.log("inicio de juego con id=" + req.user.ID)
 	let usuario = new Usuario(req.user.username, mysqlconnection);
 	usuario.id = req.user.ID;
-	let tanques=[];
+	let tanques = [];
 	// console.log('recogiendo tanques')
 	// var tanques = [];
 	var error = "";
 	algo.consultarTanques(req.user.ID, (err, codeErr, rows) => {
 		if (codeErr == 0) {
 			for (var r of rows) {
-				
+
 				let tank = new Elementos.tanque(r.nombre);
 				tank.id = r.ID;
 				// console.log(r);
@@ -114,13 +114,13 @@ app.post('/inicioJuego', ensureAuth, function(req, res) {
 			// console.log(t._tanks);
 		}
 
-		let tankinfo=[];
-		for(let t of tanques){
+		let tankinfo = [];
+		for (let t of tanques) {
 			tankinfo.push(t.info);
 		}
 
-		let partidasInfo=[]
-		for(let p of partidasJ){
+		let partidasInfo = []
+		for (let p of partidasJ) {
 			partidasInfo.push(p.infoPartida());
 		}
 		// console.log('informacion de tanques');
@@ -171,63 +171,63 @@ app.post('/crearTanque', ensureAuth, (req, res) => {
  */
 app.post('/crearPartida', ensureAuth, (req, res) => {
 
-		let tank=asignarTanque(req.user.ID,req.body.tanqueId);
-		// console.log(tank);		
-	
-		// console.log(asignado)
-		var tamaño = campo(req.body.size);
-		// console.log(tamaño);
-		var partida = new Partida(req.body.nombre, tamaño, tamaño);
+	let tank = asignarTanque(req.user.ID, req.body.tanqueId);
+	// console.log(tank);		
 
-		partida.addJugador(req.user.ID, tank);
-		// var cantidad=Math.floor((Math.random()*(tamaño*2))+(tamaño/2));
-		partida.insertarRocas(tamaño);
-		// console.log(asignado.nombre);
+	// console.log(asignado)
+	var tamaño = campo(req.body.size);
+	// console.log(tamaño);
+	var partida = new Partida(req.body.nombre, tamaño, tamaño);
 
-		partidasJ.push(partida);
+	partida.addJugador(req.user.ID, tank);
+	// var cantidad=Math.floor((Math.random()*(tamaño*2))+(tamaño/2));
+	partida.insertarRocas(tamaño);
+	// console.log(asignado.nombre);
 
-		var partidasInfo=[];
-		partidasJ.forEach( function(element) {
-			partidasInfo.push(element.infoPartida())
-		});
-		console.log("1 "+partidasInfo);
-		res.json({
-			err:0,
-			batallas:partidasInfo
-		})
+	partidasJ.push(partida);
+
+	var partidasInfo = [];
+	partidasJ.forEach(function(element) {
+		partidasInfo.push(element.infoPartida())
+	});
+	console.log("1 " + partidasInfo);
+	res.json({
+		err: 0,
+		batallas: partidasInfo
+	})
 
 
 });
 
 
 app.post('/batalla', ensureAuth, function(req, res) {
-	
-	
-	let partida=partidasJ.filter(function(part) {
-		
+
+
+	let partida = partidasJ.filter(function(part) {
+
 		if (part.nombre == req.body.id) {
-			
-			if(!part.jugadores.get(req.user.ID)){
-				let tanque=asignarTanque(req.user.ID,req.body.tanque);
+
+			if (!part.jugadores.get(req.user.ID)) {
+				let tanque = asignarTanque(req.user.ID, req.body.tanque);
 				part.addJugador(req.user.ID, tanque);
 				part.addTanque(tanque);
-				console.log('añadido tanque '+req.body.tanque);
+				console.log('añadido tanque ' + req.body.tanque);
 			}
 			return part;
-			
-		}else{
+
+		} else {
 			// console.log('antes foreach');
 			// console.log(part);
-			console.log('Eliminado jugador '+req.user.ID);
+			console.log('Eliminado jugador ' + req.user.ID);
 			part.jugadores.delete(req.user.ID)
 		}
 
 
 	});
-	
-			res.json({
-				estado: "listo"
-			})
+
+	res.json({
+		estado: "listo"
+	})
 
 
 });
@@ -240,61 +240,72 @@ app.get('/batalla', ensureAuth, function(req, res) {
 
 app.get('/batallaDatos', ensureAuth, (req, res) => {
 
-	console.log(req.user.ID);
+	// console.log(req.user.ID);
 
-	let partidaSeleccionada=partidasJ.filter(function(part) {
-		if(part._jugadores.get(req.user.ID)){
+	let partidaSeleccionada = partidasJ.filter(function(part) {
+		if (part._jugadores.get(req.user.ID)) {
 			return part
 		}
-		
+
 	});
 	console.log(partidaSeleccionada[0].infoPartida().tablero);
-	res.json({partida:partidaSeleccionada[0].infoPartida()});
+	res.json({
+		partida: partidaSeleccionada[0].infoPartida()
+	});
+
+	if (partidaSeleccionada[0]) {
+		setInterval(function() {
+			// console.log(partidaSeleccionada[0].infoPartida().tablero);
+		var datos=JSON.stringify(partidaSeleccionada[0].infoPartida());
+			io.sockets.emit('datos',datos)
+		}, 1000);
+	}
+
 
 })
 
-app.post('/left',ensureAuth,function(req,res){
+app.post('/left', ensureAuth, function(req, res) {
 
-	partidasJ.filter(function(part){
-		if(part.nombre==req.body.partida){
-			var idtanque=null;
-			if(part._jugadores.get(req.user.ID)){
-				idtanque=part._jugadores.get(req.user.ID);
+	partidasJ.filter(function(part) {
+		if (part.nombre == req.body.partida) {
+			var idtanque = null;
+			if (part._jugadores.get(req.user.ID)) {
+				idtanque = part._jugadores.get(req.user.ID);
 			}
 			part._tablero.mover(idtanque, "number");
 		}
 	});
 });
 
-io.on('connection',function(socket){
-		socket.on('patata', function(data){
-			console.log(data);
-		})
-	});
+io.on('connection', function(socket) {
+	socket.on('patata', function(data) {
+		console.log(data);
+	})
+});
 
 
-app.post('/action',ensureAuth,function(req,res){
+app.post('/action', ensureAuth, function(req, res) {
 
 
-	io.sockets.emit('mensajes','Ejecutamos socket');
+	io.sockets.emit('mensajes', 'Ejecutamos socket');
 
 
-	let tanqueId=null;
+	let tanqueId = null;
 
-	var parSel=partidasJ.filter(function(part){
-		if(part.nombre==req.body.nombre){
+	var parSel = partidasJ.filter(function(part) {
+		if (part.nombre == req.body.nombre) {
 			return part;
 		}
 	});
 
-	tanqueId=parSel[0].jugadores.get(req.user.ID);
+	tanqueId = parSel[0].jugadores.get(req.user.ID);
 
 	switch (req.body.direccion) {
 		case "Right":
-			parSel[0].girarTanque(tanqueId,req.body.direccion);
+			parSel[0].girarTanque(tanqueId, req.body.direccion);
 			break;
 		case "Left":
-			parSel[0].girarTanque(tanqueId,req.body.direccion);
+			parSel[0].girarTanque(tanqueId, req.body.direccion);
 			break;
 		case "Up":
 			parSel[0].movTanque(tanqueId);
@@ -303,9 +314,11 @@ app.post('/action',ensureAuth,function(req,res){
 			// statements_def
 			break;
 	}
-	
 
-	res.json({partida:parSel[0].infoPartida()});
+
+	res.json({
+		partida: parSel[0].infoPartida()
+	});
 
 });
 
@@ -349,18 +362,18 @@ function campo(talla) {
  * @param  {int} tanqueID  id del tanque
  * @return {object}           tanque
  */
-function asignarTanque(usuarioID,tanqueID){
-	let user=usuarios.filter(function(usera){
-		if(usera.id==usuarioID){
+function asignarTanque(usuarioID, tanqueID) {
+	let user = usuarios.filter(function(usera) {
+		if (usera.id == usuarioID) {
 			return usera;
 		}
 	})
 
-	let tanque=user[0].tanks.filter(function(tan){
+	let tanque = user[0].tanks.filter(function(tan) {
 		if (tan.id == tanqueID) {
 			return tan;
 		}
 	})
-	
+
 	return tanque[0];
 }

@@ -4,8 +4,9 @@ $(document).ready(function() {
 
 	var socket=io.connect("http://localhost:3000",{'forceNew':true});
 
-	socket.on('mensajes',function(data){
-		console.log(data);
+	socket.on('datos',function(data){
+		var datos=JSON.parse(data);
+		console.log(datos);
 	});
 
 			$.ajax({
