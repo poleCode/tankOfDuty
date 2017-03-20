@@ -41,7 +41,7 @@ $(document).ready(function() {
 				method: "post",
 				success: function(res, textStatus, xhr) {
 					// console.log(res.Tanque);
-					addObject(res.Tanque);
+					addTanque(res.tanque);
 					$("#crearTanque>input:text").val("");
 				}
 			})
@@ -84,11 +84,12 @@ $(document).ready(function() {
 })
 
 function addTanque(arrayTank) {
+	$("#tanques ul").empty();
 	for (var t of arrayTank) {
 		console.log(t);
-		$("#tanques ul").append("<li id='" + t.id + "'>" + t.nombre + "</li>");
+		addObject(t);
 	}
-
+	$("#tanques li").off();
 	$("#tanques li").on("click", function() {
 
 		$(this).parent().children().css("text-decoration", "none");
@@ -100,6 +101,7 @@ function addTanque(arrayTank) {
 
 function addObject(t) {
 	$("#tanques ul").append("<li id='" + t.ID + "'>" + t.nombre + "</li>");
+	
 }
 
 function battle(part) {

@@ -2,11 +2,15 @@ var nombrePartida = null;
 
 $(document).ready(function() {
 
-	var socket=io.connect("http://localhost:3000",{'forceNew':true});
+	var socket=io.connect("http://192.168.0.19:3000",{'forceNew':true});
 
 	socket.on('datos',function(data){
 		var datos=JSON.parse(data);
 		console.log(datos);
+		pintarTablero(datos.nombre,datos.tablero.dimensiones);
+		cargarObjetos(datos.tablero.datos);
+		informacion(datos.tablero.datos);
+		
 	});
 
 			$.ajax({
@@ -16,6 +20,7 @@ $(document).ready(function() {
 					// console.log(res);
 					pintarTablero(res.partida.nombre, res.partida.tablero.dimensiones)
 					cargarObjetos(res.partida.tablero.datos);
+					informacion(res.partida.tablero.datos);
 				}
 			})
 
@@ -65,9 +70,15 @@ $(document).ready(function() {
 
 			function cargarObjetos(objetos) {
 				for (var o of objetos) {
+					console.log(o);
 					switch (o.tipo) {
 						case "roca":
 							$("#" + o.x + "_" + o.y).css("backgroundImage", "url('img/rock.png')");
+							$("#" + o.x + "_" + o.y).css("backgroundSize", "cover")
+								// console.log($("#" + o._y + "_" + o._x));
+							break;
+						case "bala":
+							$("#" + o.x + "_" + o.y).css("backgroundImage", "url('img/bullet.png')");
 							$("#" + o.x + "_" + o.y).css("backgroundSize", "cover")
 								// console.log($("#" + o._y + "_" + o._x));
 							break;
@@ -103,6 +114,24 @@ $(document).ready(function() {
 						$("#" + t.x + "_" + t.y).css("backgroundSize", "cover")
 						break;
 
+				}
+			}
+
+			function informacion(datos){
+				$("#info").empty();
+				let html="";
+				for(let d of datos){
+					if(d.tipo=="tanque"){
+						let nome=d.nombre;
+						let life=d.vida;
+						let balas=d.municion;
+						html="<div class='infotanque'>";
+						html += "<h3>"+nome+"</h3>";
+						html += "<div> <label>Vida:</label>"+life+"</div>";
+						html += "<div> <label>Municion:</label>"+balas+"</div>";
+						html += "</div>";
+						$("#info").append(html);
+					}
 				}
 			}
 		});

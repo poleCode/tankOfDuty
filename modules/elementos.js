@@ -220,7 +220,13 @@ class Bala {
 		this._tipo = "bala";
 	}
 		// ------ GETTERS ------ //
-
+	get info(){
+		return {
+			tipo:this._tipo,
+			x: this._x,
+			y: this._y,
+		};
+	}
 	/**
 	 * Devuelve la posición x e y de la bala junto a su orientación
 	 * @return {Object} devuelve las variables o,x e y en un objeto JSON

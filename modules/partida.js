@@ -58,6 +58,10 @@ class Partida {
 		this._tablero.disparar(nombre);
 	}
 
+	moveBalas(){
+		this._tablero.moverBalas();
+	}
+
 	girarTanque(id, direccion) {
 		this._tablero.girar(id, direccion);
 	}
