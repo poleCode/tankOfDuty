@@ -41,7 +41,7 @@ $(document).ready(function() {
 				method: "post",
 				success: function(res, textStatus, xhr) {
 					// console.log(res.Tanque);
-					addTanque(res.tanque);
+					addTanque(res.Tanque);
 					$("#crearTanque>input:text").val("");
 				}
 			})

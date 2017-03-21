@@ -77,7 +77,7 @@ app.get('/juego', ensureAuth, (req, res) => {
 	});
 });
 
-app.get('/iniciarPartida', function(req, res) {
+app.get('/iniciarPartida', function (req, res) {
 	res.json({
 		map: partidas
 	});
@@ -85,7 +85,7 @@ app.get('/iniciarPartida', function(req, res) {
 
 
 
-app.post('/inicioJuego', ensureAuth, function(req, res) {
+app.post('/inicioJuego', ensureAuth, function (req, res) {
 	// console.log("inicio de juego con id=" + req.user.ID)
 	let usuario = new Usuario(req.user.username, mysqlconnection);
 	usuario.id = req.user.ID;
@@ -143,11 +143,11 @@ app.post('/inicioJuego', ensureAuth, function(req, res) {
  */
 app.post('/crearTanque', ensureAuth, (req, res) => {
 
+let usuario = new Usuario(req.user.username, mysqlconnection);
 	var tanque = new Elementos.tanque(req.body.nombre);
-	var usuario = usuarios.find((user) => {
+	 usuario = usuarios.find((user) => {
 		if (user.id == req.user.ID) return user;
 	});
-
 
 	usuario.crearTanque(req.user.ID, tanque, (err, codeErr, id) => {
 
@@ -157,17 +157,29 @@ app.post('/crearTanque', ensureAuth, (req, res) => {
 			usuario._tanks.push(tanque);
 			// console.log(usuarios);
 
-			usuario.consultarTanques(req.user.ID, (err, codeErr, rows) =>{
+			usuario.consultarTanques(req.user.ID, (err, codeErr, rows) => {
+				tanques = [];
+				if (codeErr == 0) {
+					for (var r of rows) {
+						let tank = new Elementos.tanque(r.nombre);
+						tank.id = r.ID;
+						
+						usuario._tanks.push(tank);
+						tanques.push(tank);
+					}
+				} else {
+					error = codeErr;
+				}
 				let tankinfo = [];
 				for (let t of tanques) {
 					tankinfo.push(t.info);
 				}
 				res.json({
 					error: codeErr,
-					Tanque: tanqueinfo
+					Tanque: tankinfo
 				});
-			})
-			
+			});
+
 		}
 
 
@@ -195,7 +207,7 @@ app.post('/crearPartida', ensureAuth, (req, res) => {
 	partidasJ.push(partida);
 
 	var partidasInfo = [];
-	partidasJ.forEach(function(element) {
+	partidasJ.forEach(function (element) {
 		partidasInfo.push(element.infoPartida());
 	});
 	console.log("1 " + partidasInfo);
@@ -208,10 +220,10 @@ app.post('/crearPartida', ensureAuth, (req, res) => {
 });
 
 
-app.post('/batalla', ensureAuth, function(req, res) {
+app.post('/batalla', ensureAuth, function (req, res) {
 
 
-	let partida = partidasJ.filter(function(part) {
+	let partida = partidasJ.filter(function (part) {
 
 		if (part.nombre == req.body.id) {
 
@@ -238,7 +250,7 @@ app.post('/batalla', ensureAuth, function(req, res) {
 
 });
 
-app.get('/batalla', ensureAuth, function(req, res) {
+app.get('/batalla', ensureAuth, function (req, res) {
 	res.sendFile('public/battle.html', {
 		root: __dirname
 	});
@@ -247,11 +259,11 @@ app.get('/batalla', ensureAuth, function(req, res) {
 app.get('/batallaDatos', ensureAuth, (req, res) => {
 
 	// console.log(req.user.ID);
-	let par=null;
+	let par = null;
 
-	let partidaSeleccionada = partidasJ.filter(function(part) {
+	let partidaSeleccionada = partidasJ.filter(function (part) {
 		if (part._jugadores.get(req.user.ID)) {
-			par=part;
+			par = part;
 			return part;
 		}
 
@@ -262,25 +274,25 @@ app.get('/batallaDatos', ensureAuth, (req, res) => {
 	});
 
 	if (partidaSeleccionada[0]) {
-		setInterval(function() {
+		setInterval(function () {
 			// console.log(partidaSeleccionada[0].infoPartida().tablero);
-		var datos=JSON.stringify(partidaSeleccionada[0].infoPartida());
-			io.sockets.emit('datos',datos);
-		par.moveBalas();
+			var datos = JSON.stringify(partidaSeleccionada[0].infoPartida());
+			io.sockets.emit('datos', datos);
+			par.moveBalas();
 		}, 1000);
 	}
 
 
 });
 
-io.on('connection', function(socket) {
-	socket.on('patata', function(data) {
+io.on('connection', function (socket) {
+	socket.on('patata', function (data) {
 		console.log(data);
 	});
 });
 
 
-app.post('/action', ensureAuth, function(req, res) {
+app.post('/action', ensureAuth, function (req, res) {
 
 
 	io.sockets.emit('mensajes', 'Ejecutamos socket');
@@ -288,7 +300,7 @@ app.post('/action', ensureAuth, function(req, res) {
 
 	let tanqueId = null;
 
-	var parSel = partidasJ.filter(function(part) {
+	var parSel = partidasJ.filter(function (part) {
 		if (part.nombre == req.body.nombre) {
 			return part;
 		}
@@ -362,13 +374,13 @@ function campo(talla) {
  * @return {object}           tanque
  */
 function asignarTanque(usuarioID, tanqueID) {
-	let user = usuarios.filter(function(usera) {
+	let user = usuarios.filter(function (usera) {
 		if (usera.id == usuarioID) {
 			return usera;
 		}
 	})
 
-	let tanque = user[0].tanks.filter(function(tan) {
+	let tanque = user[0].tanks.filter(function (tan) {
 		if (tan.id == tanqueID) {
 			return tan;
 		}
