@@ -2,3 +2,34 @@ body{
 	background-image: url("../img/tanqueBack.jpg");
 	background-size: cover;
 }
+
+h1{
+	display: flex;
+	justify-content: center;
+}
+
+h2{
+	display: flex;
+	justify-content: center;
+}
+
+.login{
+	display: flex;
+	justify-content: center;
+	margin-bottom: 10px;
+}
+
+.enlaces{
+	display: flex;
+	justify-content: center;
+}
+
+button{
+	border-radius: 2px;
+	background-color: skyblue;
+}
+
+#contEnviar{
+	display: flex;
+	justify-content: center;
+}
