@@ -230,7 +230,7 @@ app.post('/batalla', ensureAuth, function (req, res) {
 			if (!part.jugadores.get(req.user.ID)) {
 				let tanque = asignarTanque(req.user.ID, req.body.tanque);
 				part.addJugador(req.user.ID, tanque);
-				part.addTanque(tanque);
+				// part.addTanque(tanque);
 				// console.log('añadido tanque ' + req.body.tanque);
 			}
 			return part;

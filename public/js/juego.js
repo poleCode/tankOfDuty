@@ -100,7 +100,7 @@ function addTanque(arrayTank) {
 }
 
 function addObject(t) {
-	$("#tanques ul").append("<li id='" + t.ID + "'>" + t.nombre + "</li>");
+	$("#tanques ul").append("<li id='" + t.id + "'>" + t.nombre + "</li>");
 	
 }
 
